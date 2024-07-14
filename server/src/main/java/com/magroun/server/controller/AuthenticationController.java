@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseCookie;
 
 import com.magroun.server.dto.AuthenticationRequest;
+import com.magroun.server.dto.AuthenticationResponse;
 import com.magroun.server.dto.RegisterRequest;
 import com.magroun.server.service.AuthenticationService;
 import org.springframework.security.core.Authentication;
@@ -28,21 +28,16 @@ public class AuthenticationController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<Void> register(
-      @RequestBody RegisterRequest request,
-      HttpServletResponse response
+  public ResponseEntity<AuthenticationResponse> register(
+      @RequestBody RegisterRequest request
   ) {
-      ResponseCookie accessTokenCookie = service.register(request, response);
-      return ResponseEntity.ok().build();
+    return ResponseEntity.ok(service.register(request));
   }
-  
   @PostMapping("/authenticate")
-  public ResponseEntity<Void> authenticate(
-      @RequestBody AuthenticationRequest request,
-      HttpServletResponse response
+  public ResponseEntity<AuthenticationResponse> authenticate(
+      @RequestBody AuthenticationRequest request
   ) {
-      service.authenticate(request, response);
-      return ResponseEntity.ok().build();
+    return ResponseEntity.ok(service.authenticate(request));
   }
 
   @PostMapping("/refresh-token")

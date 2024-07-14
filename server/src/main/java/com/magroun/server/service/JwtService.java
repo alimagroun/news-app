@@ -1,13 +1,10 @@
 package com.magroun.server.service;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletResponse;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,17 +12,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.magroun.server.model.Token;
-import com.magroun.server.model.TokenType;
-import com.magroun.server.model.User;
-import com.magroun.server.repository.TokenRepository;
-import com.magroun.server.repository.UserRepository;
 
 @Service
 public class JwtService {
@@ -36,14 +24,6 @@ public class JwtService {
   private long jwtExpiration;
   @Value("${application.security.jwt.refresh-token.expiration}")
   private long refreshExpiration;
-  
-  private final UserRepository repository;
-  private final TokenRepository tokenRepository;
-  
-  public JwtService(UserRepository repository, TokenRepository tokenRepository) {
-      this.repository = repository;
-      this.tokenRepository = tokenRepository;
-  }
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -91,12 +71,8 @@ public class JwtService {
     return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
   }
 
-  public  boolean isTokenExpired(String token) {
-      try {
-          return extractExpiration(token).before(new Date());
-      } catch (ExpiredJwtException expiredJwtException) {
-          return true;
-      }
+  private boolean isTokenExpired(String token) {
+    return extractExpiration(token).before(new Date());
   }
 
   private Date extractExpiration(String token) {
@@ -116,40 +92,4 @@ public class JwtService {
     byte[] keyBytes = Decoders.BASE64.decode(secretKey);
     return Keys.hmacShaKeyFor(keyBytes);
   }
-  
-  
-  public String refreshToken(HttpServletResponse response, String refreshToken) {
-	    final String userEmail = extractUsername(refreshToken);
-	    
-	    if (userEmail != null) {
-	        var user = this.repository.findByEmail(userEmail)
-	                .orElseThrow();
-
-	        if (isTokenValid(refreshToken, user)) {
-	            var accessToken = generateToken(user);
-		        saveUserToken(user, accessToken, TokenType.ACCESS);
-
-	            ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", accessToken)
-	                    .httpOnly(true)
-	                    .secure(true)
-	                    .path("/api")
-	                    .maxAge(24 * 60 * 60)
-	                    .build();
-	            response.addHeader("Set-Cookie", accessTokenCookie.toString());
-	            return accessToken;
-	        }
-	    }
-	    
-	    return ""; 
-	}
-
-  private void saveUserToken(User user, String jwtToken, TokenType tokenType) {
-	    Token token = new Token();
-	    token.setUser(user);
-	    token.setToken(jwtToken);
-	    token.setTokenType(tokenType);
-	    token.setExpired(false);
-	    token.setRevoked(false);
-	    tokenRepository.save(token);
-	}  
 }

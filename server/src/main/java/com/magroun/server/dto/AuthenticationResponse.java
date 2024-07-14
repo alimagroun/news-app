@@ -2,6 +2,9 @@ package com.magroun.server.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
+
+@Builder
 public class AuthenticationResponse {
 	
 	  @JsonProperty("access_token")
