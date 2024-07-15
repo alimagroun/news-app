@@ -23,11 +23,11 @@ const routes: Routes = [
       },
       {
         path: 'forms',
-        loadChildren: () => import('./demo/pages/form-elements/form-elements.module').then((m) => m.FormElementsModule)
+        loadChildren: () => import('./pages/form-elements/form-elements.module').then((m) => m.FormElementsModule)
       },
       {
         path: 'tables',
-        loadChildren: () => import('./demo/pages/tables/tables.module').then((m) => m.TablesModule)
+        loadChildren: () => import('./pages/tables/tables.module').then((m) => m.TablesModule)
       },
       {
         path: 'apexchart',
@@ -45,7 +45,7 @@ const routes: Routes = [
     children: [
       {
         path: 'auth',
-        loadChildren: () => import('./demo/pages/authentication/authentication.module').then((m) => m.AuthenticationModule)
+        loadChildren: () => import('./pages/authentication/authentication.module').then((m) => m.AuthenticationModule)
       }
     ]
   }

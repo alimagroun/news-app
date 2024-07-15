@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/article-controller")
 public class ArticleController {
 	
-/*	  @GetMapping
+	  @GetMapping
 	  public ResponseEntity<String> test() {
 	    return ResponseEntity.ok(" from secured endpoint");
 	  }
-*/
+
 }
