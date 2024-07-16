@@ -4,14 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
 
 import { AuthenticationService } from '../../services/authentication.service';
-
 import { AuthenticationRoutingModule } from './authentication-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [],
   imports: [CommonModule,
     AuthenticationRoutingModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [provideHttpClient(),
   AuthenticationService
