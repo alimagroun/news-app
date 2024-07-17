@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.magroun.server.dto.AuthenticationRequest;
 import com.magroun.server.dto.AuthenticationResponse;
 import com.magroun.server.dto.RegisterRequest;
+import com.magroun.server.exception.EmailAlreadyExistsException;
 import com.magroun.server.model.Token;
 import com.magroun.server.model.TokenType;
 import com.magroun.server.model.User;
@@ -39,6 +40,10 @@ this.authenticationManager = authenticationManager;
 }
 
   public AuthenticationResponse register(RegisterRequest request) {
+	    if (repository.existsByEmail(request.getEmail())) {
+	        throw new EmailAlreadyExistsException("Email already exists");
+	    }
+	    
 	    var user = User.builder()
 	        .firstname(request.getFirstname())
 	        .lastname(request.getLastname())

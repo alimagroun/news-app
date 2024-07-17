@@ -3,16 +3,18 @@ import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RegisterRequest } from '../../../models/register-request';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-auth-signup',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule], 
   templateUrl: './auth-signup.component.html',
   styleUrls: ['./auth-signup.component.scss']
 })
 export default class AuthSignupComponent implements OnInit {
   signupForm: FormGroup;
+  errorMessage: string | null = null;
 
   constructor(private fb: FormBuilder, private authService: AuthenticationService) {}
 
@@ -31,13 +33,16 @@ export default class AuthSignupComponent implements OnInit {
       this.authService.register(registerRequest).subscribe({
         next: response => {
           console.log('Registration successful', response);
-          // Handle the successful registration logic here
+          this.errorMessage = null;
         },
         error: error => {
-          console.error('Registration failed', error);
-          // Handle the registration error logic here
+          this.errorMessage = error.error;
         }
       });
     }
+  }
+
+  clearErrorMessage(): void {
+    this.errorMessage = null;
   }
 }
